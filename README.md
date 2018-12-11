@@ -138,12 +138,16 @@ print "RESULT:",result
 
 
 ### Usefull links:
-```
+
 How to Install and Set Up a 3-Node Hadoop Cluster https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/
+
 Настройка маленького кластера Hadoop 2.2.0 с нуля https://habr.com/post/206196/
+
 Hadoop-Spark-vagrant-ansible https://github.com/cybermaster/hadoop-spark-vagrant-ansible
+
 Your cluster http://192.168.50.11:8088/cluster/apps
+
 Install, Configure, and Run Spark on Top of a Hadoop YARN Cluster https://www.linode.com/docs/databases/hadoop/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/
-```
+
 
 
