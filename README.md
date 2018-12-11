@@ -1,6 +1,6 @@
 # Hadoop + Spark
  Creating Hadoop cluster with Spark (Using vagrant + ansible)
- - Presentation / Documentation: https://advarski.github.io/hadoop-spark-vagrant-ansible/#/
+ - Presentation / Documentation: https://adavarski.github.io/vagrant-ansible-hadoop-spark/
  - Based on this outdated repository (https://github.com/cybermaster/hadoop-spark-vagrant-ansible)
  - Check Vagrantfile and inventory/vagrant-4hosts.inv and make needed changes (there are .ORIG files for 4host: 1 master, 3 workers and 1 client. Used 1 master, 1 worker and 1 client in this example )
 
