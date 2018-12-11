@@ -64,7 +64,7 @@ https://github.com/adavarski/vagrant-ansible-hadoop-spark/blob/master/docs/image
  -   ss# var input = spark.read.textFile("/in/somefile.txt")
  -   ss# input.filter(line => line.length()>0).count()
  
- Spark webUI: http://192.168.50.11:4040/jobs/
+ Spark webUI after startinf spark-shell: http://192.168.50.11:4040/jobs/
  
  # TEST TASK
  
