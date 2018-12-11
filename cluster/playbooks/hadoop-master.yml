@@ -1,0 +1,7 @@
+---
+# The main playbook to deploy the site
+
+- hosts: hadoop_master_primary
+  roles:
+  - hadoop_primary
+

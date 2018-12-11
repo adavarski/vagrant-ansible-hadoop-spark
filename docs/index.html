@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Hadoom cluster">
+        <meta name="author" content="Eugene Arbatsky">
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="https://revealjs.com/css/reveal.css">
+        <link rel="stylesheet" href="https://revealjs.com/css/theme/black.css" id="theme">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="https://revealjs.com/lib/css/zenburn.css">
+    </head>
+    <body>
+        <div class="reveal">
+
+            <div class="slides">
+                <section>
+                    <h2>Creating Hadoop Cluster with Spark</h2>
+                    <h4>using Vagrant, Ansible</h4>
+                    <h6>2018, Eugene Arbatsky</h6>
+                </section>
+                <section>
+                    You'd get such results if you will try to find prepared files for creating such cluster
+                    <img src="images/github01.png" />
+                </section>
+                <section>
+                    or like this... Everything is outdated
+                    <img src="images/github02.png" />
+                </section>
+                <section>
+                    But we can try to use it as example. I took <a href="https://github.com/cybermaster/hadoop-spark-vagrant-ansible">this repository (Hadoop-Spark-vagrant-ansible)</a>
+                    <img src="images/github03.png" />
+                </section>
+                <section>
+                    vagrant up (Check Vagrantfile and make needed changes)
+                    <img src="images/vagrant01.png" />
+                </section>
+                <section>
+                    vagrant up (Create VMs and run them)
+                    <img src="images/vagrant02.png" />
+                </section>
+                <section>
+                    vagrant up (You can check states in VirtualBox)
+                    <img src="images/vb01.png" />
+                </section>
+                <section>
+                    Create cluster by using ansible
+                    <img src="images/ansible01.png" />
+                </section>
+                <section>
+                    Define slaves in etc/hadoop/slaves
+                    <pre>
+vagrant@hadoopmaster:/usr/local/hadoop-2.9.1$ cat etc/hadoop/slaves 
+192.168.50.11
+192.168.50.12
+192.168.50.13
+192.168.50.14
+                    </pre>
+                </section>
+                <section>
+                    Starting cluster
+                    <img src="images/cluster01.png" />
+                </section>
+                <section>
+                    Steps to create a cluster:<br />
+                    <ol>
+                        <li>Clone the repository</li>
+                        <li>cd cluster/</li>
+                        <li>vagrant up</li>
+                        <li>sh install_getfiles.sh</li>
+                        <li>ansible-playbook -i inventory/vagrant-4hosts.inv playbooks/hadoop.yml</li>
+                        <li>ssh -i ~/.vagrant.d/insecure_private_key vagrant@192.168.50.11</li>
+                        <li>vm# cd $HADOOP_INSTALL</li>
+                        <li>vm# sbin/start-all.sh</li>
+                    </ol>
+                </section>
+                <section>
+                    Our architecture<br />
+                    <img src="images/net01.png" />
+                </section>
+                <section>
+                    <h1>Testing cluster</h1>
+                </section>
+                <section>
+                    Test Hadoop<br />
+                    <ol>
+                        <li>Prepare hdfs: bin/hdfs namenode -format</li>
+                        <li>Cleate input dir for data: bin/hdfs dfs -mkdir /in</li>
+                        <li>Put some info in it: bin/hdfs dfs -copyFromLocal /home/vagrant/books/* /in</li>
+                        <li>Run example: bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.9.1.jar wordcount /in /out</li>
+                        <li>See results: bin/hdfs dfs -ls /out</li>
+                        <li>Remove results: bin/hdfs dfs -rm -R /out</li>
+                    </ol>
+                </section>
+                <section>
+                    You can see the cluster at work in browser (<a href="http://192.168.50.11:8088/cluster/apps">http://192.168.50.11:8088/cluster/apps</a>)<br />
+                    <img src="images/cluster02.png" />
+                </section>
+                <section>
+                    Test Spark (in Scala)<br />
+                    <ol>
+                        <li>vm# spark-shell</li>
+                        <li>ss# var input = spark.read.textFile("/in/somefile.txt")</li>
+                        <li>ss# input.filter(line => line.length()>0).count()</li>
+                    </ol>
+                    <img src="images/spark01.png" />
+                </section>
+                <section>
+                    Test Spark (in Scala)<br />
+                    <img src="images/spark02.png" />
+                </section>
+                <section>
+                    <h1>Test task</h1>
+                    Calculate words with 2 and more vowels in an online book
+                </section>
+                <section>
+                    Getting a book<br />
+                    1. We can't get online resource and put in cluster. So let's download it in temporary file<br />
+                    <pre>
+vm# pyspark
+>>> import urllib2
+>>> response = urllib2.urlopen("http://www.gutenberg.org/files/36/36-0.txt") 
+>>> data = response.read()
+>>> f_ = open("/tmp/test.txt","w")
+>>> f_.write(data)
+>>> f_.close()
+                    </pre>
+                </section>
+                <section>
+                    2. Put the book in hdfs<br />
+                    <pre>
+>>> from subprocess import PIPE, Popen
+>>> put = Popen(["hadoop", "fs", "-put", "/tmp/test.txt", "/in/sample.txt"], stdin=PIPE, bufsize=-1)
+>>> put.communicate()
+                    </pre>
+                    <img src="images/spark03.png" />
+                </section>
+                <section>3. Prepare parsers and function<br />
+                    <pre>
+>>> from pyspark.sql.functions import *
+>>> import re
+>>> strlen = spark.udf.register("stringLengthString", lambda x: len(x))
+>>> p = re.compile("[^EUIOAeuioaуеыаоэяию]")
+>>> strvowels = spark.udf.register("stringVowels", lambda x: p.sub("",x.lower()))
+                    </pre>
+                    <img src="images/spark04.png" />
+                </section>
+                <section>4. Starting task<br />
+                    <pre>
+>>> textFile = spark.read.text("/in/sample.txt")
+>>> textFile.select(explode(split(textFile.value,"\s+")))
+            .where("stringLengthString(stringVowels(col)) >= 2").count()
+                    </pre>
+                    <img src="images/spark05.png" />
+                </section>
+                <section>
+5. Executing as a spark job<br />
+<pre>
+spark-submit  ~/calc.py
+</pre>
+<img src="images/spark06.png" />
+                </section>
+                <section>
+                    Usefull links:<br />
+                    <ol>
+                        <li><a href="https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/">How to Install and Set Up a 3-Node Hadoop Cluster</a></li>
+                        <li><a href="https://habr.com/post/206196/">Настройка маленького кластера Hadoop 2.2.0 с нуля</a></li>
+                        <li><a href="https://github.com/cybermaster/hadoop-spark-vagrant-ansible">Hadoop-Spark-vagrant-ansible</a></li>
+                        <li><a href="http://192.168.50.11:8088/cluster/apps">Your cluster</a></li>
+                        <li><a href="https://www.linode.com/docs/databases/hadoop/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/">Install, Configure, and Run Spark on Top of a Hadoop YARN Cluster</a></li>
+                    </ol>
+                </section>
+            </div>
+            <script src="https://revealjs.com/lib/js/head.min.js"></script>
+            <script src="https://revealjs.com/js/reveal.js"></script>
+            <script>
+
+// More info https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+    // More info https://github.com/hakimel/reveal.js#dependencies
+    dependencies: [
+    { src: 'https://revealjs.com/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: 'https://revealjs.com/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: 'https://revealjs.com/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: 'https://revealjs.com/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+    { src: 'https://revealjs.com/plugin/search/search.js', async: true },
+    { src: 'https://revealjs.com/plugin/zoom-js/zoom.js', async: true },
+    { src: 'https://revealjs.com/plugin/notes/notes.js', async: true }
+    ]
+});
+
+            </script>
+
+    </body>
+</html>

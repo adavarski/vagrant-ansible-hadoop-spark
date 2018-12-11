@@ -1,0 +1,17 @@
+---
+# The playbook for hadoop_primary tasks
+
+- name: Copy config files
+  template: src=files/{{item}} dest=/etc/{{item}} mode=644
+  with_items: 
+   - hosts
+
+- name: Copy config files
+  template: src=files/{{item}} dest=/usr/local/hadoop-2.9.1/etc/hadoop/{{item}} mode=644
+  with_items: 
+   - slaves
+
+- name: Copy test
+  template: src=files/{{item}} dest=/home/vagrant/{{item}} mode=644
+  with_items: 
+   - calc.py
