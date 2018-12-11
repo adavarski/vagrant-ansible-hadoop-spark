@@ -42,7 +42,9 @@
  -   vm# sbin/start-all.sh
  
  ```
-# Our architecture:
+# Our architecture
+
+https://github.com/adavarski/vagrant-ansible-hadoop-spark/blob/master/docs/images/net01.png
 
 # How to test Hadoop cluster
 
