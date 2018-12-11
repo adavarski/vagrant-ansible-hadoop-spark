@@ -1,6 +1,6 @@
 # Hadoop + Spark
  Hadoop cluster with Spark (vagrant + ansible)
- - Spark job for counting words with 2 and more vowels https://github.com/adavarski/hadoop-spark-vagrant/blob/master/cluster/playbooks/files/calc.py
+ - Spark job for counting words with 2 and more vowels https://github.com/adavarski/vagrant-ansible-hadoop-spark/blob/master/cluster/playbooks/files/calc.py
 
 # Steps to create a cluster
 
