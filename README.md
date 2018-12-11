@@ -64,7 +64,7 @@
  
  # TEST TASK
 Calculate words with 2 and more vowels in an online book
-``
+```
 Getting a book
 1. We can't get online resource and put in cluster. So let's download it in temporary file
 vm# pyspark
@@ -127,7 +127,7 @@ textFile = spark.read.text("/in/sample.txt")
 result = textFile.select(explode(split(textFile.value,"\s+"))).where("stringLengthString(stringVowels(col)) >= 2").count()
 
 print "RESULT:",result
-
+```
 
 
 ### Usefull links:
