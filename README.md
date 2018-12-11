@@ -1,8 +1,8 @@
 # Hadoop + Spark
- Hadoop cluster with Spark (Using vagrant + ansible)
- - Based on I took this repository (https://github.com/cybermaster/hadoop-spark-vagrant-ansible)
- - Check Vagrantfile and inventory/vagrant-4hosts.inv and make needed changes (there are .ORIG files for 4host: 1 master, 3 workers and 1 client, I use 1 master, 1 worker and 1 client in this example )
- - Spark job for counting words with 2 and more vowels https://github.com/adavarski/vagrant-ansible-hadoop-spark/blob/master/cluster/playbooks/files/calc.py
+ Creating Hadoop cluster with Spark (Using vagrant + ansible)
+ - Based on this outdated repository (https://github.com/cybermaster/hadoop-spark-vagrant-ansible)
+ - Check Vagrantfile and inventory/vagrant-4hosts.inv and make needed changes (there are .ORIG files for 4host: 1 master, 3 workers and 1 client. Used 1 master, 1 worker and 1 client in this example )
+
  
 
 # Steps to create a cluster
@@ -42,6 +42,7 @@
  -   vm# sbin/start-all.sh
  
  ```
+# Our architecture:
 
 # How to test Hadoop cluster
 
@@ -63,6 +64,9 @@
  Spark webUI: http://192.168.50.11:4040/jobs/
  
  # TEST TASK
+ 
+Spark job for counting words with 2 and more vowels https://github.com/adavarski/vagrant-ansible-hadoop-spark/blob/master/cluster/playbooks/files/calc.py
+
 Calculate words with 2 and more vowels in an online book
 ```
 Getting a book
