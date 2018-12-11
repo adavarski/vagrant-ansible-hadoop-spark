@@ -11,7 +11,7 @@
  -   Clone the repository
  -   cd cluster/
  -   vagrant up
- -   sh install_getfiles.sh
+ -   sh install_getfiles.sh (Hadoop Release 2.9.1 - 2018-04-16; Spark Release 2.4.0 - 2018-11-02)
  -   ansible-playbook -i inventory/vagrant-4hosts.inv playbooks/hadoop.yml
  -   ssh -i ~/.vagrant.d/insecure_private_key vagrant@192.168.50.[11:13]
      ```
